@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -33,7 +32,6 @@ public class WebServer {
 				String[] getPath = path.split(" ");
 				File file = new File("www" + getPath[1]);
 				PrintStream out = new PrintStream(socket.getOutputStream(), true, "UTF-8");
-				ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
 				System.out.println("\nChecking if the file exists");
 				if (file.exists()) {
@@ -47,6 +45,8 @@ public class WebServer {
 						out.println(scan.nextLine());
 					}
 
+					scan.close();
+					fis.close();
 				} else {
 					File errorFile = new File("www/404 Not Found.html");
 					FileInputStream errorFis = new FileInputStream(errorFile);
@@ -59,9 +59,13 @@ public class WebServer {
 					while (scanErrorFile.hasNext()) {
 						out.println(scanErrorFile.nextLine());
 					}
+
+					scanErrorFile.close();
+					errorFis.close();
 				}
 				socket.close();
 			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
